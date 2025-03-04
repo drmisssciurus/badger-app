@@ -18,7 +18,7 @@ function App() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-pixel bg-red-800 text-center p-8">
+      <h1 className="text-3xl font-title bg-red-800 text-center p-8">
         I WOULD LIKE TO BADGER!!!
       </h1>
 
