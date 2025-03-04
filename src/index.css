@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-pixel: 'Pixelify Sans', sans-serif;
+}
+
+a {
+  text-decoration: inherit;
+}
+body {
+  background-image: url('./assets/bg-blood.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-width: 320px;
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
