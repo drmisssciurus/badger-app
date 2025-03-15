@@ -13,6 +13,7 @@ export default function BadgerCard({ id, hp, onUpdateHP }: BadgerProps) {
       </div>
 
       <div className="flex gap-2 mt-2">
+        <input className="bg-gray-300 text-black rounded-2xl" type="text" />
         <button
           className="bg-red-400 text-white px-3 py-1 rounded-2xl font-pixel text-lg"
           onClick={() => onUpdateHP(id, hp - 1)}
