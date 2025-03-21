@@ -15,6 +15,11 @@ export default function BadgerForm({ onCreate }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // const confirmReset = confirm(
+    //   'This will replace your current army. Continue?'
+    // );
+    // if (!confirmReset) return;
+
     const badgers = Array.from({ length: count }, (_, i) => ({
       id: i + 1,
       hp,

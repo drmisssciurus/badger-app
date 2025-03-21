@@ -10,8 +10,10 @@
 a {
   text-decoration: inherit;
 }
+
 body {
   background-image: url('./assets/bg-blood.png');
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
