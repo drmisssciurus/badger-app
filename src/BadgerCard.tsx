@@ -68,7 +68,7 @@ export default function BadgerCard({
       <div className="flex flex-col gap-2 mt-2">
         <input
           className="bg-gray-300 text-black rounded-2xl px-2 py-1 text-right font-pixel"
-          type="text"
+          type="number"
           value={amount}
           onChange={handleChange}
           min={0}

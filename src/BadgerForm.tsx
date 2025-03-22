@@ -30,12 +30,12 @@ export default function BadgerForm({ onCreate }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 bg-gray-100 rounded-lg flex items-center gap-10"
+      className="p-4 bg-gray-100 rounded-lg flex flex-wrap items-center gap-10"
     >
       <label className="block font-pixel text-lg">
         HOW MUCH YOU NEED FOR YOUR ARMY????
         <input
-          type="number"
+          type="text"
           value={count}
           onChange={(e) => setCount(Number(e.target.value))}
           min="1"

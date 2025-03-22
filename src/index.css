@@ -12,11 +12,20 @@ a {
 }
 
 body {
-  background-image: url('./assets/bg-blood.png');
+  /* background-image: url('./assets/bg-blood.png');
 
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
+
+  /* background: rgb(255, 108, 108);
+  background: linear-gradient(
+    11deg,
+    rgba(255, 108, 108, 1) 0%,
+    rgba(255, 255, 255, 1) 25%,
+    rgba(255, 255, 255, 1) 64%,
+    rgba(255, 108, 108, 1) 100%
+  ); */
   min-width: 320px;
   width: 100%;
   min-height: 100vh;
