@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ColorResult, TwitterPicker } from 'react-color';
 
 interface BadgerProps {
   id: number;
@@ -22,6 +23,23 @@ export default function BadgerCard({
   onUpdateName,
 }: BadgerProps) {
   const [amount, setAmount] = useState<number | ''>('');
+  const [showPicker, setShowPicker] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(event.target as Node)
+      ) {
+        setShowPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -41,7 +59,7 @@ export default function BadgerCard({
     setAmount('');
   };
 
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleColorChange = (e: { target: { value: string } }) => {
     onUpdateColor(id, e.target.value);
   };
 
@@ -55,7 +73,6 @@ export default function BadgerCard({
       style={{ backgroundColor: bgColor }}
     >
       <div className="flex gap-10 items-center bg-white px-2">
-        {/* <h2 className="text-3xl font-pixel font-bold">Badger #{id}</h2> */}
         <input
           type="text"
           value={name}
@@ -65,14 +82,12 @@ export default function BadgerCard({
         <p className="text-gray-700 text-3xl font-pixel">HP: {hp}</p>
       </div>
 
-      <div className="flex flex-col gap-2 mt-2">
+      <div className="flex flex-col gap-2 mt-2 w-full items-center">
         <input
           className="bg-gray-300 text-black rounded-2xl px-2 py-1 text-right font-pixel"
           type="number"
           value={amount}
           onChange={handleChange}
-          min={0}
-          max={hp}
         />
         <div className="flex gap-2">
           <button
@@ -93,11 +108,50 @@ export default function BadgerCard({
           >
             DEAD
           </button>
+          <div className="relative mt-2">
+            <button
+              className="text-white px-3 py-1 rounded font-pixel text-xl"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPicker((prev) => !prev);
+              }}
+            >
+              🎨
+            </button>
+
+            {showPicker && (
+              <div
+                ref={pickerRef}
+                className="absolute z-50 left-full ml-4 top-0 p-2 bg-white rounded shadow"
+              >
+                <TwitterPicker
+                  triangle="hide"
+                  colors={[
+                    '#FF6900',
+                    '#FCB900',
+                    '#7BDCB5',
+                    '#00D084',
+                    '#8ED1FC',
+                    '#0693E3',
+                    '#ABB8C3',
+                    '#EB144C',
+                    '#F78DA7',
+                    '#9900EF',
+                    '#fc03ec',
+                    '#050505',
+                    '#0f5216',
+                    '#521e0f',
+                  ]}
+                  color={bgColor}
+                  onChange={(color: ColorResult) => {
+                    handleColorChange({ target: { value: color.hex } });
+                    setShowPicker(false);
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="mt-2 flex items-center">
-        <label className="font-pixel text-sm">Choose Color: </label>
-        <input type="color" value={bgColor} onChange={handleColorChange} />
       </div>
     </div>
   );
