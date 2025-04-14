@@ -6,4 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   base: '/badger-app/',
   plugins: [tailwindcss(), react()],
+  server: {
+    host: true, // 👈 ВАЖНО: позволяет подключаться по IP
+  },
 });
