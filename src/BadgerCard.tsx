@@ -24,6 +24,9 @@ export default function BadgerCard({
 }: BadgerProps) {
   const [amount, setAmount] = useState<number | ''>('');
   const [showPicker, setShowPicker] = useState(false);
+  const [tempName, setTempName] = useState(name);
+  const [wasCleared, setWasCleared] = useState(false);
+
   const pickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,6 +67,7 @@ export default function BadgerCard({
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTempName(e.target.value);
     onUpdateName(id, e.target.value);
   };
 
@@ -75,8 +79,14 @@ export default function BadgerCard({
       <div className="flex gap-10 items-center bg-white px-2">
         <input
           type="text"
-          value={name}
+          value={tempName}
           onChange={handleNameChange}
+          onMouseEnter={() => {
+            if (!wasCleared) {
+              setTempName('');
+              setWasCleared(true);
+            }
+          }}
           className="text-3xl font-pixel font-bold px-2 py-1 w-30 focus:outline-none"
         />
         <p className="text-gray-700 text-3xl font-pixel">HP: {hp}</p>
