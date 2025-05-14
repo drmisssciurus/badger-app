@@ -58,10 +58,14 @@ function App() {
     console.log('🔥 СОЗДАЁМ НОВУЮ АРМИЮ:', newBadgers);
     const enriched = newBadgers.map((b) => ({
       ...b,
-      name: 'Badger',
+      name: `Badger #${b.id}`,
       bgColor: '#ffffff',
     }));
     setBadgers(enriched);
+  };
+
+  const deleteAllBadgers = () => {
+    setBadgers([]);
   };
 
   return (
@@ -88,6 +92,17 @@ function App() {
           />
         ))}
       </div>
+
+      {badgers.length > 0 && (
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={deleteAllBadgers}
+            className="bg-red-700 hover:bg-red-800 text-black px-6 py-2 rounded font-pixel text-lg"
+          >
+            DESTROY THEM ALL!!!
+          </button>
+        </div>
+      )}
     </div>
   );
 }

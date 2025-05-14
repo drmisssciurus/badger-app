@@ -76,18 +76,18 @@ export default function BadgerCard({
       className="p-4 border-amber-700 rounded-lg shadow-md bg-white flex flex-col items-center"
       style={{ backgroundColor: bgColor }}
     >
-      <div className="flex gap-10 items-center bg-white px-2">
+      <div className="flex gap-10 items-center bg-white px-2 border-amber-950 border-2 rounded-2xl">
         <input
           type="text"
           value={tempName}
           onChange={handleNameChange}
-          onMouseEnter={() => {
+          onFocus={() => {
             if (!wasCleared) {
               setTempName('');
               setWasCleared(true);
             }
           }}
-          className="text-3xl font-pixel font-bold px-2 py-1 w-30 focus:outline-none"
+          className="text-3xl font-pixel font-bold px-2 py-1 w-35 focus:outline-none"
         />
         <p className="text-gray-700 text-3xl font-pixel">HP: {hp}</p>
       </div>
