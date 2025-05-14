@@ -10,19 +10,20 @@ interface Props {
 }
 
 export default function BadgerForm({ onCreate }: Props) {
-  const [count, setCount] = useState(1);
-  const [hp, setHp] = useState(10);
+  const [count, setCount] = useState<string>('1');
+  const [hp, setHp] = useState<string>('10');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // const confirmReset = confirm(
-    //   'This will replace your current army. Continue?'
-    // );
-    // if (!confirmReset) return;
 
-    const badgers = Array.from({ length: count }, (_, i) => ({
+    const numericCount = parseInt(count, 10);
+    const numericHp = parseInt(hp, 10);
+
+    if (isNaN(numericCount) || isNaN(numericHp)) return;
+
+    const badgers = Array.from({ length: numericCount }, (_, i) => ({
       id: i + 1,
-      hp,
+      hp: numericHp,
     }));
     onCreate(badgers);
   };
@@ -35,9 +36,9 @@ export default function BadgerForm({ onCreate }: Props) {
       <label className="block font-pixel text-lg">
         HOW MUCH YOU NEED FOR YOUR ARMY????
         <input
-          type="text"
+          type="number"
           value={count}
-          onChange={(e) => setCount(Number(e.target.value))}
+          onChange={(e) => setCount(e.target.value)}
           min="1"
           className="block w-full p-2 mt-1 border rounded"
         />
@@ -46,9 +47,9 @@ export default function BadgerForm({ onCreate }: Props) {
       <label className="block font-pixel text-lg">
         HOW MUCH HP EACH HAAAVE???
         <input
-          type="number"
+          type="text"
           value={hp}
-          onChange={(e) => setHp(Number(e.target.value))}
+          onChange={(e) => setHp(e.target.value)}
           min="1"
           className="block w-full p-2 mt-1 border rounded"
         />
