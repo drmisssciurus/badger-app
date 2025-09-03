@@ -7,6 +7,7 @@ interface Badger {
   hp: number;
   name: string;
   bgColor: string;
+  isDead: boolean;
 }
 
 function getInitialBadgers(): Badger[] {
@@ -14,27 +15,42 @@ function getInitialBadgers(): Badger[] {
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed))
+        return parsed.map((b) => ({ isDead: false, ...b }));
     } catch (err) {
-      console.error('❌ Ошибка парсинга localStorage:', err);
+      console.error('parsing error from localStorage:', err);
     }
   }
   return [];
 }
 
 function App() {
-  console.log('%cAPP MOUNTED', 'color: limegreen;');
+  console.log('app mounted', 'color: limegreen;');
 
   const [badgers, setBadgers] = useState<Badger[]>(getInitialBadgers);
 
   useEffect(() => {
-    console.log('💾 Сохраняем в localStorage:', badgers);
+    console.log('save in localStorage:', badgers);
     localStorage.setItem('badgers', JSON.stringify(badgers));
   }, [badgers]);
 
   const updateBadgerHP = (id: number, newHp: number) => {
     setBadgers((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, hp: Math.max(0, newHp) } : b))
+      prev.map((b) => {
+        if (b.id !== id) return b;
+        const clamped = Math.max(0, newHp);
+        return { ...b, hp: clamped, isDead: clamped === 0 ? true : false };
+      })
+    );
+  };
+
+  const setBadgerDead = (id: number, dead: boolean) => {
+    setBadgers((prev) =>
+      prev.map((b) =>
+        b.id === id
+          ? { ...b, isDead: dead, hp: dead ? 0 : Math.max(b.hp, 1) }
+          : b
+      )
     );
   };
 
@@ -55,11 +71,12 @@ function App() {
   };
 
   const createBadgers = (newBadgers: { id: number; hp: number }[]) => {
-    console.log('🔥 СОЗДАЁМ НОВУЮ АРМИЮ:', newBadgers);
+    console.log('new army create:', newBadgers);
     const enriched = newBadgers.map((b) => ({
       ...b,
       name: `Badger #${b.id}`,
       bgColor: '#ffffff',
+      isDead: false,
     }));
     setBadgers(enriched);
   };
@@ -85,7 +102,9 @@ function App() {
             hp={badger.hp}
             name={badger.name}
             bgColor={badger.bgColor}
+            isDead={badger.isDead}
             onUpdateHP={updateBadgerHP}
+            onMarkDead={setBadgerDead}
             onDelete={deleteBadger}
             onUpdateColor={updateBadgerColor}
             onUpdateName={updateBadgerName}

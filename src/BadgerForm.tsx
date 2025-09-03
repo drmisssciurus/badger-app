@@ -24,6 +24,7 @@ export default function BadgerForm({ onCreate }: Props) {
     const badgers = Array.from({ length: numericCount }, (_, i) => ({
       id: i + 1,
       hp: numericHp,
+      isDead: false,
     }));
     onCreate(badgers);
   };

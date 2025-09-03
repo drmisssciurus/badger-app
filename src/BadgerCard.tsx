@@ -4,12 +4,14 @@ import { ColorResult, TwitterPicker } from 'react-color';
 interface BadgerProps {
   id: number;
   hp: number;
+  name: string;
+  bgColor: string;
+  isDead: boolean;
   onUpdateHP: (id: number, newHP: number) => void;
+  onMarkDead: (id: number, dead: boolean) => void;
   onDelete: (id: number) => void;
   onUpdateColor: (id: number, newColor: string) => void;
   onUpdateName: (id: number, newName: string) => void;
-  name: string;
-  bgColor: string;
 }
 
 export default function BadgerCard({
@@ -17,7 +19,9 @@ export default function BadgerCard({
   hp,
   name,
   bgColor,
+  isDead,
   onUpdateHP,
+  onMarkDead,
   onDelete,
   onUpdateColor,
   onUpdateName,
@@ -73,9 +77,20 @@ export default function BadgerCard({
 
   return (
     <div
-      className="p-4 border-amber-700 rounded-lg shadow-md bg-white flex flex-col items-center"
-      style={{ backgroundColor: bgColor }}
+      className={`relative p-4 border-amber-700 rounded-lg shadow-md flex flex-col items-center transition
+      ${isDead ? 'grayscale opacity-60' : ''}`}
+      style={{
+        backgroundColor: bgColor,
+        filter: isDead ? 'grayscale(100%) brightness(0.9)' : 'none',
+      }}
     >
+      <button
+        onClick={() => onDelete(id)}
+        className="absolute top-2 right-2 text-gray-600 hover:text-red-600 font-bold"
+        title="Remove card"
+      >
+        ✖
+      </button>
       <div className="flex gap-10 items-center bg-white px-2 border-amber-950 border-2 rounded-2xl">
         <input
           type="text"
@@ -89,7 +104,13 @@ export default function BadgerCard({
           }}
           className="text-3xl font-pixel font-bold px-2 py-1 w-35 focus:outline-none"
         />
-        <p className="text-gray-700 text-3xl font-pixel">HP: {hp}</p>
+
+        <p className="text-gray-700 text-3xl font-pixel">
+          HP: {hp}{' '}
+          {isDead && (
+            <span className="ml-2 text-red-700 font-bold">(DEAD)</span>
+          )}
+        </p>
       </div>
 
       <div className="flex flex-col gap-2 mt-2 w-full items-center">
@@ -114,10 +135,11 @@ export default function BadgerCard({
           </button>
           <button
             className="bg-black text-white px-3 py-1 rounded-2xl font-pixel text-lg"
-            onClick={() => onDelete(id)}
+            onClick={() => onMarkDead(id, true)}
           >
             DEAD
           </button>
+
           <div className="relative mt-2">
             <button
               className="text-white px-3 py-1 rounded font-pixel text-xl"
@@ -132,7 +154,7 @@ export default function BadgerCard({
             {showPicker && (
               <div
                 ref={pickerRef}
-                className="absolute z-50 left-full ml-4 top-0 p-2 bg-white rounded shadow"
+                className="absolute z-50 top-full mt-2 left-1/2 -translate-x-1/2 p-2 bg-white rounded shadow"
               >
                 <TwitterPicker
                   triangle="hide"
