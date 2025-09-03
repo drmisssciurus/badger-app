@@ -5,6 +5,7 @@ import BadgerCard from './BadgerCard';
 interface Badger {
   id: number;
   hp: number;
+  maxHp: number;
   name: string;
   bgColor: string;
   isDead: boolean;
@@ -15,10 +16,15 @@ function getInitialBadgers(): Badger[] {
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed))
-        return parsed.map((b) => ({ isDead: false, ...b }));
+      if (Array.isArray(parsed)) {
+        return parsed.map((b: any) => ({
+          ...b,
+          maxHp: typeof b.maxHp === 'number' ? b.maxHp : b.hp,
+          isDead: typeof b.isDead === 'boolean' ? b.isDead : b.hp === 0,
+        }));
+      }
     } catch (err) {
-      console.error('parsing error from localStorage:', err);
+      console.error('parsing error localStorage:', err);
     }
   }
   return [];
@@ -34,12 +40,12 @@ function App() {
     localStorage.setItem('badgers', JSON.stringify(badgers));
   }, [badgers]);
 
-  const updateBadgerHP = (id: number, newHp: number) => {
+  const updateBadgerHP = (id: number, newHpRaw: number) => {
     setBadgers((prev) =>
       prev.map((b) => {
         if (b.id !== id) return b;
-        const clamped = Math.max(0, newHp);
-        return { ...b, hp: clamped, isDead: clamped === 0 ? true : false };
+        const clamped = Math.max(0, Math.min(newHpRaw, b.maxHp));
+        return { ...b, hp: clamped, isDead: clamped === 0 };
       })
     );
   };
@@ -48,7 +54,11 @@ function App() {
     setBadgers((prev) =>
       prev.map((b) =>
         b.id === id
-          ? { ...b, isDead: dead, hp: dead ? 0 : Math.max(b.hp, 1) }
+          ? {
+              ...b,
+              isDead: dead,
+              hp: dead ? 0 : Math.max(1, Math.min(b.hp, b.maxHp)),
+            }
           : b
       )
     );
@@ -71,12 +81,12 @@ function App() {
   };
 
   const createBadgers = (newBadgers: { id: number; hp: number }[]) => {
-    console.log('new army create:', newBadgers);
     const enriched = newBadgers.map((b) => ({
       ...b,
       name: `Badger #${b.id}`,
       bgColor: '#ffffff',
-      isDead: false,
+      maxHp: b.hp,
+      isDead: b.hp === 0,
     }));
     setBadgers(enriched);
   };

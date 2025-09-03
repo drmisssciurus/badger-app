@@ -26,7 +26,7 @@ export default function BadgerCard({
   onUpdateColor,
   onUpdateName,
 }: BadgerProps) {
-  const [amount, setAmount] = useState<number | ''>('');
+  const [amount, setAmount] = useState<string>('');
   const [showPicker, setShowPicker] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [wasCleared, setWasCleared] = useState(false);
@@ -49,20 +49,30 @@ export default function BadgerCard({
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const numberValue = Number(value);
-    if (value === '' || (numberValue >= 0 && numberValue <= hp)) {
-      setAmount(value === '' ? '' : numberValue);
+    setAmount(e.target.value);
+  };
+
+  const applyAmount = () => {
+    if (amount.trim() === '') return;
+    const n = Number(amount);
+    if (!Number.isFinite(n) || n === 0) {
+      setAmount('');
+      return;
     }
+    // знак решает действие: +хил / -урон
+    onUpdateHP(id, hp + n); // App сам зажмет 0…max и пометит isDead
+    setAmount('');
   };
 
   const handleSubtract = () => {
-    onUpdateHP(id, hp - (Number(amount) || 0));
+    const v = Number(amount) || 0;
+    onUpdateHP(id, hp - Math.abs(v));
     setAmount('');
   };
 
   const handleAdd = () => {
-    onUpdateHP(id, hp + (Number(amount) || 0));
+    const v = Number(amount) || 0;
+    onUpdateHP(id, hp + Math.abs(v));
     setAmount('');
   };
 
@@ -116,9 +126,13 @@ export default function BadgerCard({
       <div className="flex flex-col gap-2 mt-2 w-full items-center">
         <input
           className="bg-gray-300 text-black rounded-2xl px-2 py-1 text-right font-pixel"
-          type="number"
+          type="text"
           value={amount}
           onChange={handleChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') applyAmount();
+          }}
+          placeholder="50 (heal) / -30 (damage)"
         />
         <div className="flex gap-2">
           <button
