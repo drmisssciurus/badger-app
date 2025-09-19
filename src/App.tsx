@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { NeatGradient } from '@firecms/neat';
+import { neatConfig } from './neatConfig';
 import BadgerForm from './BadgerForm';
 import BadgerCard from './BadgerCard';
 
@@ -34,6 +36,22 @@ function App() {
   console.log('app mounted', 'color: limegreen;');
 
   const [badgers, setBadgers] = useState<Badger[]>(getInitialBadgers);
+
+  // NEAT gradient setup
+  const gradientRef = useRef<HTMLCanvasElement | null>(null);
+  const neatInstance = useRef<NeatGradient | null>(null);
+
+  useEffect(() => {
+    if (!gradientRef.current) return;
+    neatInstance.current = new NeatGradient({
+      ref: gradientRef.current,
+      ...neatConfig,
+    });
+    return () => {
+      neatInstance.current?.destroy();
+      neatInstance.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     console.log('save in localStorage:', badgers);
@@ -96,12 +114,15 @@ function App() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-title bg-red-800 text-center p-8">
+    <div className="relative min-h-screen p-8">
+      {/* Neat gradient need canvas tag */}
+      <canvas
+        ref={gradientRef}
+        className="fixed inset-0 -z-10 pointer-events-none w-screen h-screen"
+      />
+      <h1 className="text-3xl font-title bg-red-800 text-center p-8 mb-3">
         I WOULD LIKE TO BADGER!!!
       </h1>
-
-      {/* форма появляется только если карточек нет */}
       {badgers.length === 0 && <BadgerForm onCreate={createBadgers} />}
 
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
